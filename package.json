@@ -4,8 +4,8 @@
   "description": "A new Webpack boilerplate with hot reloading React components, and error handling on module and component level.",
   "scripts": {
     "clean": "rimraf dist",
-    "build:webpack": "cross-env NODE_ENV=production webpack --config webpack.config.prod.js",
     "build": "npm run clean && npm run build:webpack",
+    "build:webpack": "cross-env NODE_ENV=production webpack --progress --config webpack.config.prod.js",
     "preghpages": "npm run build && rm -rf gh-pages && cp -r static gh-pages && cp dist/bundle.js gh-pages",
     "ghpages": "npm run preghpages && ghpages -p gh-pages",
     "gh-pages": "npm run ghpages",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/meta-meta/aframe-react-transform-boilerplate.git"
+    "url": "https://github.com/meta-meta/radiohead.git"
   },
   "keywords": [
     "react",
@@ -55,6 +55,7 @@
   "dependencies": {
     "aframe-text-component": "^0.1.0",
     "css-loader": "^0.23.1",
+    "csvtojson": "^1.0.0",
     "html-loader": "^0.4.3",
     "js-atom": "^0.4.0",
     "json-loader": "^0.5.4",

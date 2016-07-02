@@ -2,7 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = Object.assign({}, require('./webpack.config.common'), {
-  devtool: 'source-map',
+  devtool: 'eval',
   entry: [
     './src/index'
   ],
@@ -12,11 +12,11 @@ module.exports = Object.assign({}, require('./webpack.config.common'), {
       'process.env': {
         'NODE_ENV': JSON.stringify('production')
       }
-    }),
+    })/*,
     new webpack.optimize.UglifyJsPlugin({
       compressor: {
         warnings: false
       }
-    })
+    })*/
   ]
 });

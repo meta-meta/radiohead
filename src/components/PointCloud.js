@@ -25,15 +25,18 @@ const getPixel = ( imagedata, x, y ) => {
 class PointCloud extends React.Component {
 
 
-  onLoaded = (evt, image, gap, dotSize) => {
+  onLoaded = (evt, image, gap, dotSize, dotImage) => {
     const el = evt.target;
     const obj = el.object3D;
 
     var geometry = new THREE.BufferGeometry();
 
-    const vertices = _.flatten(this.props.vertices);
+    const vertLengths = _.map(this.props.vertices, 'length');
+    const vertStarts = vertLengths.map((l, i) => _(vertLengths).take(i).reduce((acc, val) => acc + val, 0));
 
-    geometry.addAttribute( 'position', new THREE.BufferAttribute(new Float32Array(vertices), 3));
+    const allVerts = _.flattenDeep(this.props.vertices);
+
+    geometry.addAttribute( 'position', new THREE.BufferAttribute(new Float32Array(allVerts), 3));
     //geometry.addAttribute( 'color', new THREE.BufferAttribute(vertices, 3));
 
     var numVertices = geometry.attributes.position.count;
@@ -45,7 +48,7 @@ class PointCloud extends React.Component {
 
     geometry.addAttribute( 'alpha', new THREE.BufferAttribute( alphas, 1 ) );
 
-    var texture = new THREE.TextureLoader().load( "images/star-smiley-234.png" );
+    var texture = new THREE.TextureLoader().load(dotImage);
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
 
@@ -88,41 +91,60 @@ class PointCloud extends React.Component {
     obj.add( this.cloud );
 
 
+    let frame = 0;
+
     const animate = () => {
-      this.lastFrame = new Date();
+      // this.lastFrame = new Date();
       var alphas = this.cloud.geometry.attributes.alpha;
-      var count = alphas.count;
+      // var count = alphas.count;
 
-      for (var i = 0; i < count; i++) {
+      const numFrames = this.props.vertices.length;
 
-        // dynamically change alphas
-        alphas.array[i] *= 0.999;
 
-        if (alphas.array[i] < 0.5) {
-          alphas.array[i] = Math.random();
-        }
+      const prevstart = vertStarts[frame % numFrames];
+      const prevend = prevstart + vertLengths[frame % numFrames];
 
+      for (var i = prevstart; i < prevend; i++) {
+        alphas.array[i] = 0;
       }
+
+      frame++;
+
+      const start = vertStarts[frame % numFrames];
+      const end = start + vertLengths[frame % numFrames];
+
+      for (var i = start; i < end; i++) {
+        alphas.array[i] = Math.random() * 0.5 + 0.35;
+      }
+
+
+
+      // for (var i = 0; i < count; i++) {
+      //
+      //   // dynamically change alphas
+      //   alphas.array[i] *= 0.9;
+      //
+      //   if (alphas.array[i] < 0.5) {
+      //     alphas.array[i] = Math.random();
+      //   }
+      //
+      // }
 
       alphas.needsUpdate = true; // important!
 
     };
 
-    setInterval(animate, 20);
+    setInterval(animate, 167);
 
   };
 
   render() {
-
-
-
-
-    const {image, gap, dotSize} = this.props;
+    const {image, gap, dotSize, color, dotImage} = this.props;
 
     return (
       <Entity {...this.props}
-        onLoaded={evt => this.onLoaded(evt, image, gap, dotSize)}
-        key={`${image}${gap}${dotSize}` /*reload when shader specific stuff changes*/}
+        onLoaded={evt => this.onLoaded(evt, image, gap, dotSize, dotImage)}
+        key={`${image}${gap}${dotSize}${color}` /*reload when shader specific stuff changes*/}
       />
     )
   }

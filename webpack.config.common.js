@@ -24,7 +24,8 @@ module.exports = {
     {
       test: /\.html$/,
       loader: "html"
-    }]
+    }],
+    noParse: [path.join(__dirname, 'src', 'jsonData')]
   },
   resolve: {
     root: path.resolve(__dirname),
